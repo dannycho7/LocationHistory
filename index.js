@@ -1,11 +1,9 @@
-var webdriver = require('selenium-webdriver'),
-    By = webdriver.By,
-    until = webdriver.until;
-var chrome = require('selenium-webdriver/chrome');
+const fs = require("fs");
+const webdriver = require('selenium-webdriver');
+const { By, until } = webdriver;
+const chrome = require('selenium-webdriver/chrome');
 
-var path = require('chromedriver').path;
-
-var service = new chrome.ServiceBuilder(path).build();
+const service = new chrome.ServiceBuilder(require('chromedriver').path).build();
 chrome.setDefaultService(service);
 
 var options = new chrome.Options();
@@ -17,30 +15,34 @@ var driver = new webdriver.Builder()
     .withCapabilities(options.toCapabilities())
     .build();
 
-driver.get("https://google.com");
+async function grabTakeout() {
+	driver.get("https://google.com");
 
-driver.findElement(By.id("gb_70")).click()
-driver.findElement(By.name("identifier")).sendKeys("dannycho91@gmail.com");
-driver.findElement(By.id("identifierNext")).click();
-/*driver.sleep(500);
-driver.findElement(By.name("password")).sendKeys("");
-driver.findElement(By.id("passwordNext")).click();
-*/
-driver.wait(until.elementLocated(By.name("q")))
-.then(element => {
+	driver.findElement(By.id("gb_70")).click()
+	driver.findElement(By.name("identifier")).sendKeys("dannycho91@gmail.com");
+	driver.findElement(By.id("identifierNext")).click();
+	/*driver.sleep(500);
+	driver.findElement(By.name("password")).sendKeys("");
+	driver.findElement(By.id("passwordNext")).click();
+	*/
+	await driver.wait(until.elementLocated(By.name("q")))
 	driver.get("https://takeout.google.com/settings/takeout/custom/location_history?expflags&gl=US&hl=en");
 	driver.findElement(By.xpath("//*[text() = 'Next']")).click();
 	driver.sleep(1000);
-	driver.wait(until.elementLocated(By.xpath("//*[text() = 'Next']")))
-	.then(element => {
-		driver.findElement(By.xpath("//*[text() = 'Create archive']")).click();
+	await driver.wait(until.elementLocated(By.xpath("//*[text() = 'Next']")))
+	driver.findElement(By.xpath("//*[text() = 'Create archive']")).click();
 
-		driver.wait(until.elementLocated(By.css(".do.am div[jscontroller='vHpMNe']")))
-		.then(element => {
-			driver.sleep(100);
-			element.click();
-			driver.sleep(10000);
-			driver.quit();
+	let downloadBtn = await driver.wait(until.elementLocated(By.css(".do.am div[jscontroller='vHpMNe']")))
+	driver.sleep(100);
+	downloadBtn.click();
+
+	while(fs.readdirSync(__dirname + "/output").reduce((accum, file) => accum || file.includes(".crdownload"), false)) {
+		await new Promise((resolve, reject) => {
+			setTimeout(() => resolve(), 1000);
 		});
-	});
-});
+	};
+
+	driver.quit();
+}
+
+grabTakeout()
