@@ -6,7 +6,7 @@ const webdriver = require('selenium-webdriver');
 const { By, until } = webdriver;
 const chrome = require('selenium-webdriver/chrome');
 
-async function grabTakeout() {
+module.exports.grabTakeout = async function grabTakeout(email, password) {
 	const service = new chrome.ServiceBuilder(require('chromedriver').path).build();
 	chrome.setDefaultService(service);
 
@@ -22,21 +22,27 @@ async function grabTakeout() {
 	driver.get("https://google.com");
 
 	driver.findElement(By.id("gb_70")).click()
-	driver.findElement(By.name("identifier")).sendKeys("doomofn00b11@gmail.com");
+	driver.findElement(By.name("identifier")).sendKeys(email);
 	driver.findElement(By.id("identifierNext")).click();
-	/*driver.sleep(500);
-	driver.findElement(By.name("password")).sendKeys("");
+
+	driver.sleep(500);
+
+	driver.findElement(By.name("password")).sendKeys(password);
 	driver.findElement(By.id("passwordNext")).click();
-	*/
+	
 	await driver.wait(until.elementLocated(By.name("q")))
 	driver.get("https://takeout.google.com/settings/takeout/custom/location_history?expflags&gl=US&hl=en");
 	driver.findElement(By.xpath("//*[text() = 'Next']")).click();
+	
 	driver.sleep(1000);
+	
 	await driver.wait(until.elementLocated(By.xpath("//*[text() = 'Next']")))
 	driver.findElement(By.xpath("//*[text() = 'Create archive']")).click();
 
-	let downloadBtn = await driver.wait(until.elementLocated(By.css(".do.am div[jscontroller='vHpMNe']")))
+	let downloadBtn = await driver.wait(until.elementLocated(By.css(".do.am div[jscontroller='vHpMNe']")));
+
 	driver.sleep(100);
+	
 	downloadBtn.click();
 
 	driver.sleep(500);
@@ -50,7 +56,7 @@ async function grabTakeout() {
 	driver.quit();
 }
 
-async function unzipForLocationJSON() {
+module.exports.unzipForLocationJSON = async function unzipForLocationJSON() {
 	console.log("unzipping...");
 	let outputDirname = path.join(__dirname, "output");
 	if (!fs.existsSync(outputDirname)) {
@@ -78,11 +84,3 @@ async function unzipForLocationJSON() {
 		});
 	});
 }
-
-/*
-grabTakeout()
-.then(unzipForLocationJSON)
-*/
-
-
-unzipForLocationJSON();
