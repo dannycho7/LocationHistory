@@ -38,6 +38,8 @@ async function grabTakeout() {
 	driver.sleep(100);
 	downloadBtn.click();
 
+	driver.sleep(500);
+
 	while(fs.readdirSync(__dirname + "/output").reduce((accum, file) => accum || file.includes(".crdownload"), false)) {
 		await new Promise((resolve, reject) => {
 			setTimeout(() => resolve(), 1000);
