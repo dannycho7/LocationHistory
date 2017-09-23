@@ -13,6 +13,7 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "chromedriver": "^2.32.3",
+    "dotenv": "^4.0.0",
     "express": "^4.15.4",
     "mongoose": "^4.11.12",
     "selenium-standalone": "^6.9.0",

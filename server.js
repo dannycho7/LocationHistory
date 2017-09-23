@@ -1,9 +1,11 @@
+require("dotenv").config();
+
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/HackRice', { useMongoClient: true, promiseLibrary: global.Promise });
+mongoose.connect(process.env["MONGO_URI"], { useMongoClient: true, promiseLibrary: global.Promise });
 
 var User = require("./models/User");
 
