@@ -9,7 +9,7 @@ app.use(bodyParser.json());
 app.post("*", (req, res) => {
 	if(req.body["email"] && req.body["password"]) {
 		scraperMethods.grabTakeout(req.body["email"], req.body["password"])
-		.then(scraperMethods.unzipForLocationJSON)
+		.then(scraperMethods.unzipForLocationJSON(res.end));
 	}
 });
 
