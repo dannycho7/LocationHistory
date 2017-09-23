@@ -52,18 +52,26 @@ async function grabTakeout() {
 
 async function unzipForLocationJSON() {
 	console.log("unzipping...");
-	fs.readdirSync(__dirname + "/output").forEach((filename) => {
-		fs.createReadStream(__dirname + "/output" + `/${filename}`)
+	let outputDirname = path.join(__dirname, "output");
+	if (!fs.existsSync(outputDirname)) {
+	    fs.mkdirSync(outputDirname);
+	}
+	fs.readdirSync(outputDirname).forEach((filename) => {
+		fs.createReadStream(`${outputDirname}/${filename}`)
 		.pipe(unzip.Parse())
 		.on("entry", (entry) => {
 			var fileName = entry.path;
 		    var type = entry.type; // 'Directory' or 'File' 
 		    var size = entry.size;
 		    if (path.basename(entry.path) === "Location History.json") {
-		    	entry.pipe(fs.createWriteStream("input.json"));
-				exec("python compute.py", (err, stdout, stderr) => {
-					console.log(stdout);
-				});
+		    	let locationWriteStream = fs.createWriteStream("find-route/location.json")
+		    	entry.pipe(locationWriteStream);
+		    	locationWriteStream.on("close", () => {
+	    			exec("python find-route/find_route.py", (err, stdout, stderr) => {
+	    				if(err) throw err;
+						console.log("output:", stdout);
+					});
+	    		});				
 		    } else {
 				entry.autodrain();
 		    }
@@ -71,14 +79,9 @@ async function unzipForLocationJSON() {
 	});
 }
 
-async function cleanOutput() {
-	// does nothing for now
-}
-
 /*
 grabTakeout()
 .then(unzipForLocationJSON)
-.then(cleanOutput);
 */
 
 
