@@ -47,10 +47,30 @@ async function grabTakeout() {
 	};
 
 	driver.quit();
+}
 
+async function unzipForLocationJSON() {
+	console.log("unzipping...");
 	fs.readdirSync(__dirname + "/output").forEach((filename) => {
-		console.log(filename);
+		fs.createReadStream(__dirname + "/output" + `/${filename}`)
+		.pipe(unzip.Parse())
+		.on("entry", (entry) => {
+			var fileName = entry.path;
+		    var type = entry.type; // 'Directory' or 'File' 
+		    var size = entry.size;
+		    if (path.basename(entry.path) === "Location History.json") {
+				console.log("found");
+		    } else {
+				entry.autodrain();
+		    }
+		});
 	});
 }
 
+async function cleanOutput() {
+	// does nothing for now
+}
+
 grabTakeout()
+.then(unzipForLocationJSON)
+.then(cleanOutput);
