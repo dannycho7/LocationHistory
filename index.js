@@ -1,3 +1,4 @@
+const { exec } = require('child_process');
 const fs = require("fs");
 const path = require("path");
 const unzip = require("unzip2");
@@ -59,7 +60,10 @@ async function unzipForLocationJSON() {
 		    var type = entry.type; // 'Directory' or 'File' 
 		    var size = entry.size;
 		    if (path.basename(entry.path) === "Location History.json") {
-				console.log("found");
+		    	entry.pipe(fs.createWriteStream("pythonInput.json"));
+				exec("python compute.py", (err, stdout, stderr) => {
+					console.log(stdout);
+				});
 		    } else {
 				entry.autodrain();
 		    }
@@ -71,6 +75,11 @@ async function cleanOutput() {
 	// does nothing for now
 }
 
+/*
 grabTakeout()
 .then(unzipForLocationJSON)
 .then(cleanOutput);
+*/
+
+
+unzipForLocationJSON();
