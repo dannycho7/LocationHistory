@@ -43,6 +43,10 @@ async function grabTakeout() {
 	};
 
 	driver.quit();
+
+	fs.readdirSync(__dirname + "/output").forEach((filename) => {
+		console.log(filename);
+	});
 }
 
 grabTakeout()
