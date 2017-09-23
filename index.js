@@ -60,7 +60,7 @@ async function unzipForLocationJSON() {
 		    var type = entry.type; // 'Directory' or 'File' 
 		    var size = entry.size;
 		    if (path.basename(entry.path) === "Location History.json") {
-		    	entry.pipe(fs.createWriteStream("pythonInput.json"));
+		    	entry.pipe(fs.createWriteStream("input.json"));
 				exec("python compute.py", (err, stdout, stderr) => {
 					console.log(stdout);
 				});
