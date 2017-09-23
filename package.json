@@ -14,6 +14,7 @@
     "body-parser": "^1.18.2",
     "chromedriver": "^2.32.3",
     "express": "^4.15.4",
+    "mongoose": "^4.11.12",
     "selenium-standalone": "^6.9.0",
     "selenium-webdriver": "^3.5.0",
     "unzip2": "^0.2.5",
