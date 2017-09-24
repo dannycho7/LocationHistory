@@ -31,7 +31,7 @@ function computeInconvenience(currentUserFastRoute, destination) {
 	return Math.abs(currentUserFastRoute[0] - destination[0]) + Math.abs(currentUserFastRoute[1] - destination[1]);
 }
 
-const marginOfError = 35;
+const marginOfError = 55;
 
 app.post("/compute", (req, res) => {
 	console.log("Computing...");
@@ -49,10 +49,10 @@ app.post("/compute", (req, res) => {
 								let inconvenience = computeInconvenience(currentUserFastRoute, destination);
 								console.log(`Inconvenience is ${inconvenience} for ${currentUserFastRoute} and ${destination}`)
 								if(inconvenience < marginOfError) {
-									roughInconvenience[inconvenience] = {
+									let key = destination[0] + destination[1] + user["email"];
+									roughInconvenience[key] = {
 										lat: destination[0],
 										lon: destination[1],
-										timestamp: destination[2],
 										email: user["email"]
 									};
 								}
@@ -60,7 +60,8 @@ app.post("/compute", (req, res) => {
 						});
 						
 					});
-					let leastInconvenient = Object.keys(roughInconvenience).sort().map((resultPlot) => roughInconvenience[resultPlot]);
+					console.log(roughInconvenience);
+					let leastInconvenient = Object.keys(roughInconvenience).map((resultPlot) => roughInconvenience[resultPlot]);
 					console.log(leastInconvenient);
 					res.end(JSON.stringify(leastInconvenient));
 				});
