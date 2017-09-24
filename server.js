@@ -5,7 +5,9 @@ const app = express();
 const bodyParser = require("body-parser");
 
 const mongoose = require('mongoose');
-mongoose.connect(process.env["MONGO_URI"], { useMongoClient: true, promiseLibrary: global.Promise });
+mongoose.connect(process.env["MONGO_URI"], { useMongoClient: true });
+
+mongoose.Promise = global.Promise;
 
 var User = require("./models/User");
 
@@ -24,7 +26,16 @@ app.post("/", (req, res) => {
 });
 
 app.post("/compute", (req, res) => {
-	// something else
+	console.log("Computing...");
+	if(req.body["email"]) {
+		User.find({ email: req.body["email"] })
+		.then(user => {
+			if(user.length > 0) {
+				let fastRoutes = user[0]["routes"];
+				console.log("found", fastRoutes);
+			}
+		});
+	}
 });
 
 app.listen(5000, () => console.log("Server listening in on port 5000"));
