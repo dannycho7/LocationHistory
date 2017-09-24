@@ -31,10 +31,9 @@ function computeInconvenience(currentUserFastRoute, destination) {
 	return Math.abs(currentUserFastRoute[0] - destination[0]) + Math.abs(currentUserFastRoute[1] - destination[1]);
 }
 
-const marginOfError = 55;
+const marginOfError = 15;
 
 app.post("/compute", (req, res) => {
-	console.log("Computing...");
 	if(req.body["email"]) {
 		User.find({ email: req.body["email"] })
 		.then(user => {
@@ -47,7 +46,7 @@ app.post("/compute", (req, res) => {
 						user["routes"].forEach(destination => {
 							currentUserFastRoutes.forEach(currentUserFastRoute => {
 								let inconvenience = computeInconvenience(currentUserFastRoute, destination);
-								console.log(`Inconvenience is ${inconvenience} for ${currentUserFastRoute} and ${destination}`)
+								// console.log(`Inconvenience is ${inconvenience} for ${currentUserFastRoute} and ${destination}`)
 								if(inconvenience < marginOfError) {
 									let key = destination[0] + destination[1] + user["email"];
 									roughInconvenience[key] = {
@@ -60,9 +59,7 @@ app.post("/compute", (req, res) => {
 						});
 						
 					});
-					console.log(roughInconvenience);
 					let leastInconvenient = Object.keys(roughInconvenience).map((resultPlot) => roughInconvenience[resultPlot]);
-					console.log(leastInconvenient);
 					res.end(JSON.stringify(leastInconvenient));
 				});
 			}
