@@ -16,12 +16,13 @@ const scraperMethods = require(".");
 app.use(bodyParser.json());
 
 app.post("/", (req, res) => {
-	console.log("Received root request");
 	if(req.body["email"] && req.body["password"]) {
 		scraperMethods.grabTakeout(req.body["email"], req.body["password"])
-		.then(scraperMethods.unzipForLocationJSON(req.body["email"], (data) => {
+		.then(() => scraperMethods.unzipForLocationJSON(req.body["email"], (data) => {
 			User.create({ email: req.body["email"], routes: data });
-			res.end(JSON.stringify(data.slice(0, 50)));
+			db.collection("locations").find({ email: req.body["email"] }).limit(50).toArray((err, locations) => {
+				res.end(JSON.stringify(locations));
+			});
 		}));
 	}
 });
