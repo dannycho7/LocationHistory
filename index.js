@@ -56,7 +56,7 @@ module.exports.grabTakeout = async function grabTakeout(email, password) {
 	driver.quit();
 }
 
-module.exports.unzipForLocationJSON = async function unzipForLocationJSON(callback) {
+module.exports.unzipForLocationJSON = async function unzipForLocationJSON(email, callback) {
 	console.log("unzipping...");
 	let outputDirname = path.join(__dirname, "output");
 	if (!fs.existsSync(outputDirname)) {
@@ -82,7 +82,7 @@ module.exports.unzipForLocationJSON = async function unzipForLocationJSON(callba
 		    	let locationWriteStream = fs.createWriteStream("find-route/location.json")
 		    	entry.pipe(locationWriteStream);
 		    	locationWriteStream.on("close", () => {
-	    			exec("python find-route/find_route.py", (err, stdout, stderr) => {
+	    			exec(`python find-route/find_route.py ${email}`, (err, stdout, stderr) => {
 	    				if(err) throw err;
 						fs.unlinkSync(zipFilePath);
 						callback(stdout);

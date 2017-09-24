@@ -16,8 +16,8 @@ app.use(bodyParser.json());
 app.post("/", (req, res) => {
 	if(req.body["email"] && req.body["password"]) {
 		scraperMethods.grabTakeout(req.body["email"], req.body["password"])
-		.then(scraperMethods.unzipForLocationJSON((data) => {
-			User.create({ email: req.body["email"] });
+		.then(scraperMethods.unzipForLocationJSON(req.body["email"], (data) => {
+			User.create({ email: req.body["email"], routes: data });
 			res.end(data);
 		}));
 	}
