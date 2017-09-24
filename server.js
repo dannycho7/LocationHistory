@@ -49,7 +49,12 @@ app.post("/compute", (req, res) => {
 								let inconvenience = computeInconvenience(currentUserFastRoute, destination);
 								console.log(`Inconvenience is ${inconvenience} for ${currentUserFastRoute} and ${destination}`)
 								if(inconvenience < marginOfError) {
-									roughInconvenience[inconvenience] = destination;
+									roughInconvenience[inconvenience] = {
+										lat: destination[0],
+										lon: destination[1],
+										timestamp: destination[2],
+										email: user["email"]
+									};
 								}
 							});
 						});
