@@ -5,15 +5,14 @@ const unzip = require("unzip2");
 const webdriver = require('selenium-webdriver');
 const { By, until } = webdriver;
 const chrome = require('selenium-webdriver/chrome');
+const service = new chrome.ServiceBuilder(require('chromedriver').path).build();
+chrome.setDefaultService(service);
+var options = new chrome.Options();
+let downloadPath = __dirname + "/output";
+options.setUserPreferences({ "download.default_directory": downloadPath });
 
 module.exports.grabTakeout = async function grabTakeout(email, password) {
-	const service = new chrome.ServiceBuilder(require('chromedriver').path).build();
-	chrome.setDefaultService(service);
-
-	var options = new chrome.Options();
-	let downloadPath = __dirname + "/output";
-	options.setUserPreferences({ "download.default_directory": downloadPath });
-
+	
 	var driver = new webdriver.Builder()
 					.forBrowser("chrome")
 				    .withCapabilities(options.toCapabilities())
