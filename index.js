@@ -87,7 +87,7 @@ module.exports.unzipForLocationJSON = async function unzipForLocationJSON(email,
 		    			exec(`python find-route/find_route.py ${email}`, (err, stdout, stderr) => {
 		    				if(err) throw err;
 							fs.unlinkSync(zipFilePath);
-							callback(stdout);
+							callback(JSON.parse(stdout.replace(/\(/g, "[").replace(/\)/g, "]")));
 						});
 		    		}, 500);
 	    		});
