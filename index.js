@@ -25,6 +25,7 @@ module.exports.grabTakeout = async function grabTakeout(email, password) {
 	driver.findElement(By.id("identifierNext")).click();
 
 	await driver.wait(until.elementLocated(By.name("password")));
+	driver.sleep(200);
 	driver.findElement(By.name("password")).sendKeys(password);
 	driver.findElement(By.id("passwordNext")).click();
 	
@@ -32,13 +33,11 @@ module.exports.grabTakeout = async function grabTakeout(email, password) {
 	driver.get("https://takeout.google.com/settings/takeout/custom/location_history?expflags&gl=US&hl=en");
 	driver.findElement(By.xpath("//*[text() = 'Next']")).click();
 		
-	await driver.wait(until.elementLocated(By.xpath("//*[text() = 'Next']")))
-	driver.sleep(200);
+	await driver.wait(until.elementLocated(By.xpath("//*[text() = 'Create archive']")))
+	driver.sleep(500);
 	driver.findElement(By.xpath("//*[text() = 'Create archive']")).click();
 
 	let downloadBtn = await driver.wait(until.elementLocated(By.css(".do.am div[jscontroller='vHpMNe']")));
-
-	driver.sleep(100);
 	
 	downloadBtn.click();
 
