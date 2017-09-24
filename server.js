@@ -5,7 +5,7 @@ const app = express();
 const bodyParser = require("body-parser");
 
 const mongoose = require('mongoose');
-mongoose.connect(process.env["MONGO_URI"], { useMongoClient: true });
+let db = mongoose.connect(process.env["MONGO_URI"], { useMongoClient: true });
 
 mongoose.Promise = global.Promise;
 
@@ -20,7 +20,7 @@ app.post("/", (req, res) => {
 		scraperMethods.grabTakeout(req.body["email"], req.body["password"])
 		.then(scraperMethods.unzipForLocationJSON(req.body["email"], (data) => {
 			User.create({ email: req.body["email"], routes: data });
-			res.end(data);
+			res.end(data.slice(0, 50));
 		}));
 	}
 });
@@ -33,6 +33,9 @@ app.post("/compute", (req, res) => {
 			if(user.length > 0) {
 				let fastRoutes = user[0]["routes"];
 				console.log("found", fastRoutes);
+				db.collection("locations").find().toArray((err, locations) => {
+					console.log("All locations", locations);
+				});
 			}
 		});
 	}
