@@ -47,11 +47,13 @@ module.exports.grabTakeout = async function grabTakeout(email, password) {
 
 	driver.sleep(500);
 
-	while(fs.readdirSync(__dirname + "/output").reduce((accum, file) => accum || file.includes(".crdownload"), false)) {
+	while(fs.readdirSync(__dirname + "/output").length === 0 || fs.readdirSync(__dirname + "/output").reduce((accum, file) => accum || file.includes(".crdownload"), false)) {
 		await new Promise((resolve, reject) => {
 			setTimeout(() => resolve(), 1000);
 		});
 	};
+
+	console.log("driver quitting...", fs.readdirSync(__dirname + "/output"));
 
 	driver.quit();
 }
@@ -64,7 +66,6 @@ module.exports.unzipForLocationJSON = async function unzipForLocationJSON(email,
 	}
 
 	while(fs.readdirSync(outputDirname).length === 0) {
-		console.log("iterated through this await");
 		await new Promise((resolve, reject) => setTimeout(() => resolve(), 1000));
 	}
 
@@ -82,6 +83,7 @@ module.exports.unzipForLocationJSON = async function unzipForLocationJSON(email,
 		    	let locationWriteStream = fs.createWriteStream("find-route/location.json")
 		    	entry.pipe(locationWriteStream);
 		    	locationWriteStream.on("close", () => {
+		    		console.log("Finished write stream to location.json");
 	    			exec(`python find-route/find_route.py ${email}`, (err, stdout, stderr) => {
 	    				if(err) throw err;
 						fs.unlinkSync(zipFilePath);
