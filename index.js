@@ -83,12 +83,14 @@ module.exports.unzipForLocationJSON = async function unzipForLocationJSON(email,
 		    	let locationWriteStream = fs.createWriteStream("find-route/location.json")
 		    	entry.pipe(locationWriteStream);
 		    	locationWriteStream.on("close", () => {
-		    		console.log("Finished write stream to location.json");
-	    			exec(`python find-route/find_route.py ${email}`, (err, stdout, stderr) => {
-	    				if(err) throw err;
-						fs.unlinkSync(zipFilePath);
-						callback(stdout);
-					});
+		    		setTimeout(() => {
+		    			console.log("Finished write stream to location.json");
+		    			exec(`python find-route/find_route.py ${email}`, (err, stdout, stderr) => {
+		    				if(err) throw err;
+							fs.unlinkSync(zipFilePath);
+							callback(stdout);
+						});
+		    		}, 500);
 	    		});
 		    } else {
 				entry.autodrain();
