@@ -55,8 +55,11 @@ app.post("/compute", (req, res) => {
 						});
 						
 					});
-					console.log(`Sending back rough inconvenience ${JSON.stringify(roughInconvenience)}`);
-					res.end(JSON.stringify(roughInconvenience));
+					let leastInconvenient = Object.keys(roughInconvenience).sort().map((resultPlot) => {
+						return roughInconvenience[resultPlot];
+					});
+					console.log(leastInconvenient);
+					res.end(JSON.stringify(leastInconvenient));
 				});
 			}
 		});
